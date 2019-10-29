@@ -1,12 +1,19 @@
 <template>
   <main class="home-content">
-    <div class="loading"></div>
+    <div v-if="isLoading">
+      <div class="loading"> </div>
+    </div>
     <div class="home-content__wrapper">
       <h1 class="home-content__header">Trades</h1>
       <div class="underline"></div>
       <div class="home-content__body">
         <article class="home-content__card" v-for="(trade, index) in trades" :key="index">
-          <img :src="require('@/assets/42257164_xl.jpg')" alt srcset class="trade-image" />
+          <img
+            :src="require('@/assets/42257164_xl.jpg')"
+            alt="promotion image"
+            srcset
+            class="trade-image"
+          />
           <div class="home-content__card-details">
             <h3 class="home-content__card-name">{{trade.name}}</h3>
             <address>{{trade.address}}, {{trade.city}}. {{trade.postcode}}</address>
@@ -15,7 +22,7 @@
               <a :href="`mailto:${ trade.email}`">{{trade.email}}</a>
             </div>
             <ul class="open-hours">
-             <li v-for="(day, index) in trade.hours" :key="index"> {{ day.day.substr(0,3) }} </li>
+              <li v-for="(day, index) in trade.hours" :key="index">{{ day.day.substr(0,3) }}</li>
             </ul>
             <span class="status open-status" v-if="trade.is_active = true">OPEN</span>
             <span class="status close-status" v-else>CLOSE</span>
@@ -35,13 +42,11 @@ export default {
     return {
       trades: [],
       isLoading: true,
-      isOpen: false,
-      openDays: [],
     };
   },
   mounted: async function() {
     this.getTrades();
-    this.getStatus();
+
   },
   methods: {
     async getTrades() {
@@ -50,27 +55,41 @@ export default {
         .then(response => {
           console.log(response);
           this.trades = response.data.trades;
+            console.log('loading')
           this.isLoading = false;
         })
         .catch(error => {
           console.error(error);
         });
     },
-    getStatus() {
-      console.log(this.trade)
-    }
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
+
 .home-content {
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  &:first-child{
+    align-items: center;
+  }
+  .loading{
+    border: 1rem solid #f3f3f3; /* Light grey */
+    border-top: 1rem solid #3498db; /* Blue */
+    border-radius: 100%;
+    width: 7rem;
+    height: 7rem;
+    animation: spin 2s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
   &__wrapper {
-    width: 100%;
     padding: 0 2rem;
     display: block;
     .underline {
@@ -99,7 +118,7 @@ export default {
     }
   }
   &__card {
-    width: 30%;
+   width: 30%;
     border: 0.2rem #000 solid;
 
     margin: 2rem 0.5rem 0 0.5rem;
@@ -119,10 +138,10 @@ export default {
         flex-wrap: wrap;
         padding: 0;
         li {
-          margin: .5em .5rem;
+          margin: 0.5em 0.5rem;
           padding: 0.5em;
           border: 0.2rem #000 solid;
-          text-transform: uppercase
+          text-transform: uppercase;
         }
       }
       .status {
@@ -136,6 +155,17 @@ export default {
       .close-status {
         background: red;
       }
+    }
+  }
+}
+
+@media screen and(max-width: 730px) {
+  .home-content {
+    &__body{
+       justify-content: center;
+    }
+    &__card{
+      width: 85%
     }
   }
 }
