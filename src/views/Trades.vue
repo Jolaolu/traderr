@@ -15,11 +15,7 @@
               <a :href="`mailto:${ trade.email}`">{{trade.email}}</a>
             </div>
             <ul class="open-hours">
-              <li>Mon</li>
-              <li>Tue</li>
-              <li>Wed</li>
-              <li>Thu</li>
-              <li>Fri</li>
+             <li v-for="(day, index) in trade.hours" :key="index"> {{ day.day.substr(0,3) }} </li>
             </ul>
             <span class="status open-status" v-if="trade.is_active = true">OPEN</span>
             <span class="status close-status" v-else>CLOSE</span>
@@ -40,11 +36,12 @@ export default {
       trades: [],
       isLoading: true,
       isOpen: false,
-      openDays: []
+      openDays: [],
     };
   },
   mounted: async function() {
     this.getTrades();
+    this.getStatus();
   },
   methods: {
     async getTrades() {
@@ -53,14 +50,15 @@ export default {
         .then(response => {
           console.log(response);
           this.trades = response.data.trades;
-          this.openDays = response.data.trades.hours;
           this.isLoading = false;
         })
         .catch(error => {
           console.error(error);
         });
     },
-    getStatus() {}
+    getStatus() {
+      console.log(this.trade)
+    }
   }
 };
 </script>
@@ -91,7 +89,6 @@ export default {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    /* justify-content: center; */
 
     a {
       color: #2c3e50;
@@ -118,11 +115,14 @@ export default {
       .open-hours {
         list-style-type: none;
         display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
         padding: 0;
         li {
-          margin: 0 0.5rem;
+          margin: .5em .5rem;
           padding: 0.5em;
           border: 0.2rem #000 solid;
+          text-transform: uppercase
         }
       }
       .status {
